@@ -29,43 +29,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [userRole, setUserRole] = useState<'admin' | 'user' | null>(null);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
 
-        if (session?.user) {
-          try {
-            const { data, error } = await supabase
-              .from('profiles')
-              .select('is_admin')
-              .eq('id', session.user.id)
-              .single();
+      if (session?.user) {
+        try {
+          const { data, error } = await supabase
+            .from('profiles')
+            .select('is_admin')
+            .eq('id', session.user.id)
+            .single();
 
-            if (!error && data) {
-              setUserRole(data.is_admin ? 'admin' : 'user');
-            } else {
-              setUserRole(null);
-            }
-          } catch (error) {
-            console.error('Error fetching user role:', error);
+          if (!error && data) {
+            setUserRole(data.is_admin ? 'admin' : 'user');
+          } else {
             setUserRole(null);
           }
-        } else {
+        } catch (fetchError) {
+          console.error('Error fetching user role:', fetchError);
           setUserRole(null);
         }
-
-        setLoading(false);
+      } else {
+        setUserRole(null);
       }
-    );
+
+      setLoading(false);
+    });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    }).finally(() => setLoading(false));
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
@@ -75,15 +74,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string, nombre: string) => {
     const redirectUrl = `${window.location.origin}/`;
-
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: redirectUrl,
-        data: {
-          nombre: nombre
-        }
+        data: { nombre }
       }
     });
     return { error };
@@ -93,15 +89,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await supabase.auth.signOut();
   };
 
-  const value = {
-    user,
-    session,
-    loading,
-    signIn,
-    signUp,
-    signOut,
-    userRole
-  };
+  const value = { user, session, loading, signIn, signUp, signOut, userRole };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
