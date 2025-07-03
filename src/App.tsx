@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -57,3 +56,5 @@ const App = () => (
 );
 
 export default App;
+
+// ✅ Mantén tu configuración original: rutas protegidas, contextos, React Query y tooltips. Solo asegúrate de que la ruta /admin existe y usa ProtectedRoute con requiredRole="admin".
