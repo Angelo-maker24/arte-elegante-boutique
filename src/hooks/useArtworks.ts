@@ -5,21 +5,21 @@ export const useArtworks = () => {
   const [artworks, setArtworks] = useState<any[]>([]);
 
   const fetchArtworks = async () => {
-    const { data, error } = await supabase.from('paintings').select('*');
-    if (!error) setArtworks(data);
+    const { data } = await supabase.from('paintings').select('*');
+    setArtworks(data || []);
   };
 
-  const addArtwork = async (newArtwork) => {
+  const addArtwork = async (newArtwork: any) => {
     await supabase.from('paintings').insert([newArtwork]);
     fetchArtworks();
   };
 
-  const editArtwork = async (id, updatedFields) => {
-    await supabase.from('paintings').update(updatedFields).eq('id', id);
+  const editArtwork = async (id: string, fields: any) => {
+    await supabase.from('paintings').update(fields).eq('id', id);
     fetchArtworks();
   };
 
-  const deleteArtwork = async (id) => {
+  const deleteArtwork = async (id: string) => {
     await supabase.from('paintings').delete().eq('id', id);
     fetchArtworks();
   };

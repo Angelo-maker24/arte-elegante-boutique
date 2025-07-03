@@ -8,7 +8,6 @@ const AdminLink = () => {
   const navigate = useNavigate();
 
   if (loading) return null;
-
   if (userRole === 'admin') {
     return (
       <Button onClick={() => navigate('/admin')} className="elegant-button">
@@ -16,8 +15,6 @@ const AdminLink = () => {
       </Button>
     );
   }
-
   return null;
 };
-
 export default AdminLink;
