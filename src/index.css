@@ -101,11 +101,19 @@
 
 @layer components {
   .art-card {
-    @apply group overflow-hidden rounded-lg bg-white shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-500 hover:-translate-y-1;
+    @apply overflow-hidden rounded-lg bg-white shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-500 hover:-translate-y-1;
+  }
+  
+  .art-card:hover {
+    @apply shadow-xl -translate-y-1;
   }
   
   .art-card-image {
-    @apply w-full h-80 object-cover transition-transform duration-700 group-hover:scale-105;
+    @apply w-full h-80 object-cover transition-transform duration-700;
+  }
+  
+  .art-card:hover .art-card-image {
+    @apply scale-105;
   }
   
   .gold-accent {
